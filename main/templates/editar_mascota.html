@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Datos de la Mascota</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/f77d509de8.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .navbar {
+            margin-bottom: 20px; 
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra Superior -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <i class="fa-solid fa-otter fa-2x me-2" style="margin-left: 5px;color: white;"></i>
+                <a class="navbar-brand fs-3" href="{% url 'interfaz' %}">
+                Inicio</a>
+            </div>
+        </div>
+    </nav>
+    <!-- Contenido específico de cada página -->
+    <div class="container">
+        <div class="card mt-4">
+            <div class="card-header bg-dark text-white">
+                <h1 class="card-title">Editar Mascota</h1>
+            </div>
+            <div class="card-body">
+                <!-- Mensaje de confirmación -->
+                <div id="mensajeConfirmacion" class="alert alert-success" style="display: none;">
+                    Sus cambios se han guardado correctamente.
+                </div>
+
+                <!-- Formulario de edición de mascota -->
+                <form method="POST" action="/actualizar/{% if mascota.id %}{{ mascota.id }}/{% endif %}" class="row g-3">
+                    {% csrf_token %}
+                    <div class="mb-1">
+                        <label for="nombreMascota" class="col-3 form-label">Nombre</label>
+                        <input type="text" class="form-control col-9" id="nombreMascota" name="nombre" value="{{ mascota.nombre }}" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="especieMascota" class="col-3 form-label">Especie</label>
+                        <input type="text" class="form-control col-9" id="especieMascota" name="especie" value="{{ mascota.especie }}" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="razaMascota" class="col-3 form-label">Raza</label>
+                        <input type="text" class="form-control col-9" id="razaMascota" name="raza" value="{{ mascota.raza }}" required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="sexoMascota" class="col-3 form-label">Sexo</label>
+                        <select class="form-select col-9" id="sexoMascota" name="sexo" required>
+                            <option value="macho" {% if mascota.sexo == 'macho' %} selected {% endif %}>Macho</option>
+                            <option value="hembra" {% if mascota.sexo == 'hembra' %} selected {% endif %}>Hembra</option>
+                        </select>
+                    </div>
+                    <div class="mb-1">
+                        <label for="edadMascota" class="col-3 form-label">Edad</label>
+                        <input type="number" class="form-control col-9" id="edadMascota" name="edad" value="{{ mascota.edad }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pesoMascota" class="col-3 form-label">Peso (Kg)</label>
+                        <input type="number" class="form-control col-9" id="pesoMascota" name="peso" value="{{ mascota.peso }}" required>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary" id="guardarMascotaBtn">Guardar</button>
+                        </div>
+                        <div class="col text-end">
+                            <a href="{% url 'interfaz' %}" class="btn btn-danger">Volver</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Función para mostrar el mensaje de confirmación al hacer clic en el botón de guardar
+        document.getElementById('guardarMascotaBtn').addEventListener('click', function() {
+            document.getElementById('mensajeConfirmacion').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

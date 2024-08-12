@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Próximas Citas</title>
+    {% load static %}
+    <!-- Enlaces a Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Enlace a los estilos del calendario -->
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/f77d509de8.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* Estilos adicionales según tus necesidades */
+        .navbar {
+            margin-bottom: 20px; /* Ajuste según tu diseño */
+        }
+        #proximasCitas {
+            display: block; /* Asegura que el div sea visible por defecto */
+        }
+        .table {
+            margin-top: 20px;
+        }
+        .card {
+            margin-top: 20px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra Superior -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <img src="{% static 'imagenes/mainIcon.png' %}" alt="Main Icon" style="width: 2.5rem;">
+                <a class="navbar-brand fs-3 ms-2" href="{% url 'interfaz' %}">Inicio</a>
+            </div>
+        </div>
+        
+    </nav>
+    <!-- Contenido específico de la página -->
+    <div class="container">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h1 class="card-title">Próximas Citas</h1>
+            </div>
+            <div class="card-body">
+                <div id="calendar"></div>
+
+                <h2 class="mt-4">Citas Registradas</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Mascota</th>
+                            <th>Médico</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Motivo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cita in citas %}
+                            <tr>
+                                <td>{{ cita.cliente.nombre }}</td>
+                                <td>{{ cita.mascota.nombre }}</td>
+                                <td>{{ cita.medico.nombre }}</td>
+                                <td>{{ cita.fecha }}</td>
+                                <td>{{ cita.hora }}</td>
+                                <td>{{ cita.motivo }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6">No hay citas registradas.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <p id="noCitasMessage" style="display: none;">No tienes citas programadas.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/fullcalendar.min.js' %}"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#calendar').fullCalendar({
+                // Opciones del calendario
+            });
+
+            // Lógica para mostrar u ocultar el mensaje de "No tienes citas programadas."
+            if ($('tbody tr').length === 1) {
+                $('#noCitasMessage').show();
+                $('#proximasCitas').hide();
+            } else {
+                $('#noCitasMessage').hide();
+                $('#proximasCitas').show();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Recordatorio de Cita</title>
+</head>
+<body>
+    <h1>Recordatorio de Cita Veterinaria</h1>
+    <p>Estimado/a {{ cita.cliente.nombre }} {{ cita.cliente.apellido }},</p>
+    <p>Le recordamos que tiene una cita programada con nosotros para su mascota {{ cita.mascota.nombre }}.</p>
+    <p><strong>Fecha:</strong> {{ cita.fecha }}</p>
+    <p><strong>Hora:</strong> {{ cita.hora }}</p>
+    <p><strong>Motivo:</strong> {{ cita.motivo }}</p>
+    <p>Por favor, asegúrese de llegar a tiempo.</p>
+    <p>Saludos,<br>Su clínica veterinaria</p>
+</body>
+</html>
