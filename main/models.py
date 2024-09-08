@@ -51,6 +51,7 @@ class Expediente(models.Model):
     archivo = models.FileField(upload_to='expedientes/')
     nombre_archivo = models.CharField(max_length=255)
     tipo_archivo = models.CharField(max_length=50)
+    categoria = models.CharField(max_length=50, null=True, blank=True) 
     fecha_subida = models.DateTimeField(auto_now_add=True)
 
 
@@ -68,6 +69,7 @@ class Cita(models.Model):
     medico = models.ForeignKey(MedicoVeterinario, on_delete=models.CASCADE)
     fecha = models.DateField()
     hora = models.TimeField()
+    duracion = models.DurationField() 
     motivo = models.TextField()
     confirmada = models.BooleanField(default=False)
 
@@ -75,3 +77,29 @@ class Cita(models.Model):
 class Administrador(models.Model):
     correo = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
+
+
+class Consulta(models.Model):
+    cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
+    mascota = models.ForeignKey('Mascota', on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    motivo = models.TextField()
+
+    def __str__(self):
+        return f"Consulta de {self.mascota.nombre} - {self.motivo[:20]}"
+
+class Medicamento(models.Model):
+    consulta = models.ForeignKey('Consulta', related_name='medicamentos', on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=100)
+    dosis = models.CharField(max_length=100)
+    frecuencia = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.nombre} - {self.dosis}"
+
+
+class HorarioTrabajo(models.Model):
+    medico = models.ForeignKey(MedicoVeterinario, on_delete=models.CASCADE)
+    dia = models.CharField(max_length=10)  # Por ejemplo, "Lunes", "Martes", etc.
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()

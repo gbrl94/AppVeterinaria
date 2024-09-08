@@ -194,6 +194,42 @@ def guardar_cita(request):
 
     return redirect('solicitar_cita')
 
+def confirmar_cita(request, cita_id):
+    cita = get_object_or_404(Cita, pk=cita_id)
+
+    if request.method == 'POST':
+        cita.confirmada = True
+        cita.save()
+
+        # Enviar correo de confirmación
+        cliente = cita.cliente
+        subject = 'Confirmación de Cita'
+        context = {
+            'cliente_nombre': cliente.nombre,
+            'mascota_nombre': cita.mascota.nombre,
+            'fecha': cita.fecha,
+            'hora': cita.hora,
+            'motivo': cita.motivo,
+        }
+
+        # Renderizar el HTML y el texto del correo
+        html_message = render_to_string('emails/confirmacion_cita.html', context)
+        plain_message = strip_tags(html_message)
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = cliente.correo
+
+        send_mail(
+            subject,
+            plain_message,
+            from_email,
+            [to_email],
+            html_message=html_message,
+            fail_silently=False,
+        )
+
+        return redirect('citas_lista')  # Redirigir a la lista de citas después de confirmar
+
+    return render(request, 'confirmar_cita.html', {'cita': cita})
 
 def ver_mascotas(request):
     mascotas = Mascota.objects.all()
@@ -287,6 +323,11 @@ def subir_expediente(request):
     mascotas = Mascota.objects.select_related('cliente').all()
     return render(request, 'subir_expediente.html', {'mascotas': mascotas})
 
+def ver_expedientes_veterinario(request):
+    # Tu lógica aquí
+    return render(request, 'nombre_template.html')
+
+
 #Interfaz veterinario
 def veterinario_interfaz(request):
     veterinario_id = request.session.get('veterinario', {}).get('id')
@@ -319,3 +360,51 @@ def recomendaciones_vacunacion(request):
     for mascota in mascotas:
         mascota.calcular_fechas_vacunacion()
     return render(request, 'recomendaciones_vacunacion.html', {'mascotas': mascotas})
+
+# Vista para gestionar turnos y horarios
+def gestionar_turnos(request):
+    if request.method == 'POST':
+        # Lógica para guardar turnos y horarios
+        # Puedes manejar la lógica aquí y luego redirigir si es necesario
+        pass
+    return render(request, 'turnos_horarios.html')
+
+def realizar_consulta(request):
+    if request.method == 'POST':
+        form = ConsultaForm(request.POST)
+        if form.is_valid():
+            consulta = form.save()
+            # Guardar la consulta y enviar una notificación por correo (opcional)
+            send_mail(
+                'Nueva Consulta Registrada',
+                f'Se ha registrado una nueva consulta para la mascota {consulta.mascota.nombre}.',
+                'from@example.com',
+                ['to@example.com'],  # Cambia por el correo del veterinario o quien deba recibir la notificación
+                fail_silently=False,
+            )
+            return redirect('consultas_online')  # Redirige a la página de consultas en línea
+    else:
+        form = ConsultaForm()
+
+    # Obtener medicamentos registrados
+    medicamentos = Medicamento.objects.all()
+
+    context = {
+        'form': form,
+        'medicamentos': medicamentos,
+    }
+    return render(request, 'consultas_online.html', context)
+
+def agregar_medicamento(request):
+    if request.method == 'POST':
+        form = MedicamentoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('consultas_online')  # Redirige a la página de consultas en línea
+    else:
+        form = MedicamentoForm()
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'agregar_medicamento.html', context)

@@ -2,6 +2,7 @@ from django.urls import path
 from . import views 
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import confirmar_cita
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -30,6 +31,7 @@ urlpatterns = [
     path('actualizar/<int:id_m>/', views.actualizar, name='actualizar'),
     path('eliminar/<int:id_m>/', views.eliminar, name='eliminar'),
     path('mascotas/', views.ver_mascotas, name='ver_mascotas'),
+    
     path('recomendaciones-vacunacion/', views.recomendaciones_vacunacion, name='recomendaciones_vacunacion'),
     path('mascota/<int:mascota_id>/expedientes/', views.ver_expedientes, name='ver_expedientes'),
     path('veterinario/cuenta/', views.veterinario_cuenta, name='veterinario_cuenta'),
@@ -40,11 +42,13 @@ urlpatterns = [
     path('veterinario-expediente/', views.subir_expediente, name='veterinario_expediente'),
     path('veterinario-expediente/', views.subir_expediente, name='subir_expediente'),
 
+ 
+
 
     #prueba correo notificacion
+    path('confirmar_cita/<int:cita_id>/', confirmar_cita, name='confirmar_cita'),
 
-
-    #descarga expediente
+  
    
  
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

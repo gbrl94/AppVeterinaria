@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expedientes Veterinarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/f77d509de8.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .navbar {
+            margin-bottom: 20px; 
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra Superior -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <img src="{% static 'imagenes/mainIcon.png' %}" alt="Main Icon" style="width: 2.5rem;">
+                <a class="navbar-brand fs-3 ms-2" href="{% url 'interfaz' %}">Inicio</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido de la página -->
+    <div class="container">
+        <div class="card mt-4">
+            <div class="card-header bg-dark text-white">
+                <h1 class="card-title">Buscar Expedientes por Cliente</h1>
+            </div>
+            <div class="card-body">
+                <!-- Formulario de búsqueda -->
+                <form action="{% url 'buscar_expedientes_veterinario' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="cliente" class="form-label">Seleccionar Cliente</label>
+                        <select id="cliente" name="cliente" class="form-select" required>
+                            <option value="">Seleccione un cliente</option>
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}" {% if cliente.id == cliente_seleccionado.id %}selected{% endif %}>{{ cliente.nombre }} {{ cliente.apellido }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </form>
+
+                <!-- Mostrar mascotas y expedientes -->
+                {% if cliente_seleccionado %}
+                <div class="mt-4">
+                    <h2>Mascotas de {{ cliente_seleccionado.nombre }} {{ cliente_seleccionado.apellido }}</h2>
+                    {% if mascotas %}
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nombre Mascota</th>
+                                    <th>Expedientes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mascota in mascotas %}
+                                <tr>
+                                    <td>{{ mascota.nombre }}</td>
+                                    <td>
+                                        <a href="{% url 'ver_expedientes_mascota' mascota.id %}" class="btn btn-info">Ver Expedientes</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p>No se encontraron mascotas para este cliente.</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Mostrar expedientes si se ha seleccionado un cliente -->
+                {% if expedientes %}
+                <div class="mt-4">
+                    <h2>Expedientes</h2>
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nombre Archivo</th>
+                                    <th>Fecha Subida</th>
+                                    <th>Descargar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for expediente in expedientes %}
+                                <tr>
+                                    <td>{{ expediente.nombre_archivo }}</td>
+                                    <td>{{ expediente.fecha_subida|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <a href="{{ expediente.archivo.url }}" class="btn btn-primary">Descargar</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3">No se encontraron expedientes.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
+                <a href="{% url 'veterinario_interfaz' %}" class="btn btn-primary mt-4">Volver</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
